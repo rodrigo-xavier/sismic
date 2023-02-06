@@ -1,16 +1,5 @@
-#include <msp430.h>
-#include <stdbool.h>
+#include "../xavier.h"
 
-void GPIO(uint8_t, uint16_t, bool);
-
-int main(void)
-{
-  WDTCTL = WDTPW | WDTHOLD; // stop watchdog timer
-
-  GPIO(2, BIT1, input=true);
-
-  return 0;
-}
 
 void GPIO(uint8_t PORT, uint16_t BIT, bool input)
 {
@@ -21,43 +10,43 @@ void GPIO(uint8_t PORT, uint16_t BIT, bool input)
     {
     case 1:
       P1DIR |= BIT;  // Configura pino como entrada (zera o bit X de P1DIR)
-      P1REN |= BIT;  // Ativa o resistor (habilita o bit X de P1REN)
       P1OUT &= ~BIT; // Seleciona o resistor de pull-down
+      P1REN |= BIT;  // Ativa o resistor (habilita o bit X de P1REN)
       break;
     case 2:
       P2DIR |= BIT;
-      P2REN |= BIT;
       P2OUT &= ~BIT;
+      P2REN |= BIT;
       break;
     case 3:
       P3DIR |= BIT;
-      P3REN |= BIT;
       P3OUT &= ~BIT;
+      P3REN |= BIT;
       break;
     case 4:
       P4DIR |= BIT;
-      P4REN |= BIT;
       P4OUT &= ~BIT;
+      P4REN |= BIT;
       break;
     case 5:
       P5DIR |= BIT;
-      P5REN |= BIT;
       P5OUT &= ~BIT;
+      P5REN |= BIT;
       break;
     case 6:
       P6DIR |= BIT;
-      P6REN |= BIT;
       P6OUT &= ~BIT;
+      P6REN |= BIT;
       break;
     case 7:
       P7DIR |= BIT;
-      P7REN |= BIT;
       P7OUT &= ~BIT;
+      P7REN |= BIT;
       break;
     case 8:
       P8DIR |= BIT;
-      P8REN |= BIT;
       P8OUT &= ~BIT;
+      P8REN |= BIT;
       break;
     default:
       break;
