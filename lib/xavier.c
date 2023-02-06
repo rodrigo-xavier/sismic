@@ -1,9 +1,6 @@
-#include "../xavier.h"
-
-
-void GPIO(uint8_t PORT, uint16_t BIT, bool input)
+void GPIO(uint8_t PORT, uint16_t BIT, bool enable)
 {
-  switch (input)
+  switch (enable)
   {
   case true:
     switch (PORT)
