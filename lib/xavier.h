@@ -5,4 +5,4 @@
 #pragma once
 
 
-void GPIO(uint8_t PORT, uint16_t BIT, bool enable);
+void GPIO(uint8_t PORT, uint16_t BIT, bool ENABLE);
