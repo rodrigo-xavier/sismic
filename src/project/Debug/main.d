@@ -1,6 +1,7 @@
 # FIXED
 
 main.obj: ../main.c
+main.obj: ../../../lib/l298n.h
 main.obj: C:/ti/ccs1210/ccs/ccs_base/msp430/include/msp430.h
 main.obj: C:/ti/ccs1210/ccs/ccs_base/msp430/include/msp430f5529.h
 main.obj: C:/ti/ccs1210/ccs/ccs_base/msp430/include/in430.h
@@ -8,6 +9,8 @@ main.obj: C:/ti/ccs1210/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/intr
 main.obj: C:/ti/ccs1210/ccs/tools/compiler/ti-cgt-msp430_21.6.0.LTS/include/intrinsics_legacy_undefs.h
 
 ../main.c:
+
+../../../lib/l298n.h:
 
 C:/ti/ccs1210/ccs/ccs_base/msp430/include/msp430.h:
 
