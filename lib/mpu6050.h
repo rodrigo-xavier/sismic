@@ -1,55 +1,58 @@
-#pragma once
 #include <msp430.h>
+#include <stdint.h>
 
-// Define os pinos de controle do L298N
-#define ENA BIT2 // P1.2
-#define IN1 BIT3 // P1.3
-#define IN2 BIT4 // P1.4
+#define MPU6050_ADDRESS 0x68
 
-// Define a frequncia do PWM
-#define PWM_FREQ 1000
+// Complementary filter constant
+#define ALPHA 0.98
+
+// Flags to indicate when a read or write is complete
+volatile uint8_t i2c_write_done = 0;
+volatile uint8_t i2c_read_done = 0;
+
+// Function prototypes
+void i2c_init(void);
+void i2c_write(uint8_t reg, uint8_t data);
+uint8_t i2c_read(uint8_t reg);
 
 
-void init_l298_pwm(void);
-void set_l298n_pwm_duty_cycle(float duty_cycle);
-void foward(void);
-void reverse(void);
-void stop(void);
 
-
-void init_l298_pwm()
+void i2c_init(void)
 {
-    // Configura o pino ENA como saida PWM
-    P1DIR |= ENA;
-    P1SEL |= ENA;
+    // Configure I2C peripheral
+    UCB0CTL1 |= UCSWRST;        // Put state machine in reset
+    UCB0CTL0 = UCMST + UCMODE_3 + UCSYNC;  // I2CMaster, synchronous mode
+    UCB0CTL1 = UCSSEL_2 + UCSWRST;  // Use SMCLK, keep in reset
+    UCB0BR0 = 12;             // fSCL = SMCLK/12 = ~100kHz
+    UCB0BR1 = 0;
+    UCB0CTL1 &= ~UCSWRST;       // Release state machine
 
-    TA0CTL = TASSEL_2 + MC_1;
-    TA0CCR0 = (unsigned int)((float)(1000000 / PWM_FREQ));
-    TA0CCTL1 = OUTMOD_7;
+    UCB0I2CSA = MPU6050_ADDRESS;  // Set slave address
+
+    UCB0IE |= UCNACKIE + UCSTTIE + UCSTPIE + UCALIE;   // Enable I2C interrupts
 }
 
-void set_l298n_pwm_duty_cycle(float duty_cycle)
+void i2c_write(uint8_t reg, uint8_t data)
 {
-    TA0CCR1 = (unsigned int)((float)(duty_cycle * TA0CCR0));
+    i2c_write_done = 0;
+    UCB0CTL1 |= UCTR + UCTXSTT;    // I2C TX, start condition
+    UCB0TXBUF = reg;              // Send register address
+    while (!i2c_write_done);
+    UCB0TXBUF = data;             // Send data
+    while (!i2c_write_done);
 }
 
-void forward()
-// Configura o L298N para girar o motor no sentido horario
+uint8_t i2c_read(uint8_t reg)
 {
-    P1OUT |= IN1;
-    P1OUT &= ~IN2;
+    uint8_t data;
+    i2c_read_done = 0;
+    UCB0CTL1 |= UCTR + UCTXSTT;    // I2C TX, start condition
+    UCB0TXBUF = reg;              // Send register address
+    while (!i2c_read_done);
+    UCB0CTL1 &= ~UCTR;            // I2C RX, change direction
+    UCB0CTL1 |= UCTXSTT;          // I2C start condition
+    while (!i2c_read_done);
+    data = UCB0RXBUF;              // Read data
+    return data;
 }
 
-void reverse()
-// Configura o L298N para girar o motor no sentido anti-horario
-{
-    P1OUT &= ~IN1;
-    P1OUT |= IN2;
-}
-
-void stop()
-// Configura o L298N para parar o motor
-{
-    P1OUT &= ~IN1;
-    P1OUT &= ~IN2;
-}
