@@ -1,4 +1,5 @@
 #include "../../lib/l298n.h"
+#include "../../lib/mpu6050.h"
 #include <msp430.h>
 
 
