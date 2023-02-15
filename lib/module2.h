@@ -42,7 +42,6 @@ void exercise2_2(void)
 
 void exercise2_3(void)
 {
-    volatile unsigned int N = 1000000;
     WDTCTL = WDTPW | WDTHOLD;
 
     GPIO(2, BIT1, true);
@@ -55,6 +54,9 @@ void exercise2_3(void)
             P1OUT ^= BIT0;
             debounce_counter(N);
         }
-        if ()
+        if ((P2IN & BIT1))
+        {
+            debounce_counter(N);
+        }
     }
 }

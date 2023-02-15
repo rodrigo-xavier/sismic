@@ -5,7 +5,7 @@
 
 
 void GPIO(uint8_t, uint16_t, bool);
-void debounce_counter(int);
+void debounce_counter(void);
 
 
 void GPIO(uint8_t PORT, uint16_t BIT, bool ENABLE)
@@ -102,6 +102,7 @@ void GPIO(uint8_t PORT, uint16_t BIT, bool ENABLE)
 }
 
 
-void debounce_counter(int i){
+void debounce_counter(){
+  volatile int i = 50000;
   while(i--);
 }
