@@ -15,3 +15,21 @@ int main(void)
     set_l298n_pwm_duty_cycle(0.5);
     return 0;
 }
+
+
+// void mpu6050main(void)
+// {
+//     WDTCTL = WDTPW | WDTHOLD;   // Stop watchdog timer
+
+//     i2c_init();
+//     mpu6050_init();
+
+//     // Enable global interrupts
+//     _BIS_SR(GIE);
+
+//     while (1)
+//     {
+//         mpu6050_read();
+//         filter_data();
+//     }
+// }
