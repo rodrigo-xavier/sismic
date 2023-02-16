@@ -26,6 +26,7 @@ void l298n_init(void)
     // Configura o pino ENA e ENB como saida PWM
     P1DIR |= ENA | ENB;
     P1SEL |= ENA | ENB;
+    P1DIR |= IN1 | IN2 | IN3 | IN4;
 
     TA0CTL = TASSEL__SMCLK | MC__UP;
     TA0CCR0 = (unsigned int)((float)(1000000 / PWM_FREQ));
