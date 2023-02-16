@@ -14,14 +14,14 @@
 #define IN4 BIT4 // P1.4
 
 
-void l298n_init(void);
-void l298n_config_pwm(float duty_cycle);
+void init_l298n(void);
+void config_l298n_pwm(float duty_cycle);
 void foward(void);
 void reverse(void);
 void stop(void);
 
 
-void l298n_init(void)
+void init_l298n(void)
 {
     // Configura o pino ENA e ENB como saida PWM
     P1DIR |= ENA | ENB;
@@ -33,7 +33,7 @@ void l298n_init(void)
     TA0CCTL1 = OUTMOD_7;
 }
 
-void l298n_config_pwm(float duty_cycle)
+void config_l298n_pwm(float duty_cycle)
 {
     // Configura o PWM, o duty_cycle pode servier como controle de velocidade
     TA0CCR1 = (unsigned int)((float)(duty_cycle * TA0CCR0));

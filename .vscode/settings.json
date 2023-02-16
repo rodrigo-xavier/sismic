@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "xavier.h": "c",
-        "l298n.h": "c"
+        "l298n.h": "c",
+        "mpu6050.h": "c"
     }
 }

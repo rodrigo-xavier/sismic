@@ -1,121 +1,52 @@
+#pragma once
 #include <msp430.h>
 #include <stdint.h>
+#include "i2c.h" // Header file for MPU6050 functions
 
-#define MPU6050_ADDRESS 0x68
+#define MPU6050_ADDRESS_AD0_LOW     0x68 // address pin low (GND), default for InvenSense evaluation board
 
-// MPU6050 Register addresses
-#define MPU6050_ACCEL_XOUT_H 0x3B
-#define MPU6050_GYRO_XOUT_H 0x43
+#define MPU6050_RA_SMPLRT_DIV       0x19 // Sample rate divider register address
+#define MPU6050_RA_CONFIG           0x1A // Configuration register address
+#define MPU6050_RA_GYRO_CONFIG      0x1B // Gyroscope configuration register address
+#define MPU6050_RA_ACCEL_CONFIG     0x1C // Accelerometer configuration register address
+#define MPU6050_RA_PWR_MGMT_1       0x6B // Power management 1 register address
 
-// Complementary filter constant
-#define ALPHA 0.98
+#define MPU6050_RA_ACCEL_XOUT_H     0x3B
+#define MPU6050_RA_ACCEL_XOUT_L     0x3C
+#define MPU6050_RA_ACCEL_YOUT_H     0x3D
+#define MPU6050_RA_ACCEL_YOUT_L     0x3E
+#define MPU6050_RA_ACCEL_ZOUT_H     0x3F
+#define MPU6050_RA_ACCEL_ZOUT_L     0x40
 
-// Global variables
-float filtered_angle = 0;
-float raw_angle = 0;
-float raw_rate = 0;
-
-// Flags to indicate when a read or write is complete
-volatile uint8_t i2c_write_done = 0;
-volatile uint8_t i2c_read_done = 0;
-
-// Function prototypes
-void i2c_init(void);
-void i2c_write(uint8_t reg, uint8_t data);
-uint8_t i2c_read(uint8_t reg);
-void mpu6050_init(void);
-void mpu6050_read(void);
-void filter_data(void);
+#define MPU6050_RA_GYRO_XOUT_H      0x43
+#define MPU6050_RA_GYRO_XOUT_L      0x44
+#define MPU6050_RA_GYRO_YOUT_H      0x45
+#define MPU6050_RA_GYRO_YOUT_L      0x46
+#define MPU6050_RA_GYRO_ZOUT_H      0x47
+#define MPU6050_RA_GYRO_ZOUT_L      0x48
 
 
-void i2c_init(void)
+void init_mpu6050(void);
+void read_mpu6050(int16_t *accel_x, int16_t *accel_y, int16_t *accel_z, int16_t *gyro_x, int16_t *gyro_y, int16_t *gyro_z);
+
+
+void init_mpu6050(void)
 {
-    // Configure I2C peripheral
-    UCB0CTL1 |= UCSWRST;        // Put state machine in reset
-    UCB0CTL0 = UCMST + UCMODE_3 + UCSYNC;  // I2CMaster, synchronous mode
-    UCB0CTL1 = UCSSEL_SMCLK + UCSWRST;  // Use SMCLK, keep in reset
-    UCB0BR0 = 12;             // fSCL = SMCLK/12 = ~100kHz
-    UCB0BR1 = 0;
-    UCB0CTL1 &= ~UCSWRST;       // Release state machine
-
-    UCB0I2CSA = MPU6050_ADDRESS;  // Set slave address
-
-    UCB0IE |= UCNACKIE + UCSTTIE + UCSTPIE + UCALIE;   // Enable I2C interrupts
+    // Configure MPU6050
+    i2c_write_register(MPU6050_RA_PWR_MGMT_1, 0x00);   // Wake up MPU6050
+    i2c_write_register(MPU6050_RA_SMPLRT_DIV, 0x07);   // Set sample rate to 1 kHz
+    i2c_write_register(MPU6050_RA_CONFIG, 0x00);       // Set DLPF to 260 Hz bandwidth
+    i2c_write_register(MPU6050_RA_GYRO_CONFIG, 0x08);  // Set gyro full scale
+    i2c_write_register(MPU6050_RA_ACCEL_CONFIG, 0x08); // Set accelerometer full scale
 }
 
-void i2c_write(uint8_t reg, uint8_t data)
+void read_mpu6050(int16_t *accel_x, int16_t *accel_y, int16_t *accel_z, int16_t *gyro_x, int16_t *gyro_y, int16_t *gyro_z)
 {
-    i2c_write_done = 0;
-    UCB0CTL1 |= UCTR + UCTXSTT;    // I2C TX, start condition
-    UCB0TXBUF = reg;              // Send register address
-    while (!i2c_write_done);
-    UCB0TXBUF = data;             // Send data
-    while (!i2c_write_done);
-}
-
-uint8_t i2c_read(uint8_t reg)
-{
-    uint8_t data;
-    i2c_read_done = 0;
-    UCB0CTL1 |= UCTR + UCTXSTT;    // I2C TX, start condition
-    UCB0TXBUF = reg;              // Send register address
-    while (!i2c_read_done);
-    UCB0CTL1 &= ~UCTR;            // I2C RX, change direction
-    UCB0CTL1 |= UCTXSTT;          // I2C start condition
-    while (!i2c_read_done);
-    data = UCB0RXBUF;              // Read data
-    return data;
-}
-
-void mpu6050_init(void)
-{
-    // Wake up the MPU6050
-    i2c_write(0x6B, 0x00);  // PWR_MGMT_1 register, set to zero to wake the MPU6050 up
-}
-
-void mpu6050_read(void)
-{
-    uint8_t high, low;
-    // Read the raw accelerometer data
-    high = i2c_read(MPU6050_ACCEL_XOUT_H);
-    low = i2c_read(MPU6050_ACCEL_XOUT_H + 1);
-    raw_angle = (high << 8) | low;
-    // Read the raw gyroscope data
-    high = i2c_read(MPU6050_GYRO_XOUT_H);
-    low = i2c_read(MPU6050_GYRO_XOUT_H + 1);
-    raw_rate = (high << 8) | low;
-}
-
-void filter_data(void)
-{
-    // Apply complementary filter
-    filtered_angle = ALPHA * (filtered_angle + raw_rate) + (1 - ALPHA) * raw_angle;
-}
-
-
-// Interrupt service routine for I2C
-#pragma vector = USCI_B0_VECTOR
-__interrupt void USCI_B0_ISR(void)
-{
-    switch(UCB0IV)
-    {
-        case USCI_I2C_UCNACKIFG:
-            UCB0CTL1 |= UCTXSTP;           // I2C stop condition
-            UCB0IFG &= ~UCNACKIFG;         // Clear NACK flag
-            break;
-        case USCI_I2C_UCSTTIFG:
-            UCB0IFG &= ~UCSTTIFG;          // Clear start condition flag
-            break;
-        case USCI_I2C_UCSTPIFG:
-            UCB0IFG &= ~UCSTPIFG;          // Clear stop condition flag
-            if (UCB0CTL1 & UCTR) {         // If in transmit mode
-                i2c_write_done = 1;
-            } else {                      // If in receive mode
-                i2c_read_done = 1;
-            }
-            break;
-        case USCI_I2C_UCALIFG:
-            UCB0IFG &= ~UCALIFG;          // Clear arbitration lost flag
-            break;
-    }
+    // Read MPU6050 data
+    *accel_x = (i2c_read_register(MPU6050_RA_ACCEL_XOUT_H) << 8) | i2c_read_register(MPU6050_RA_ACCEL_XOUT_L);
+    *accel_y = (i2c_read_register(MPU6050_RA_ACCEL_YOUT_H) << 8) | i2c_read_register(MPU6050_RA_ACCEL_YOUT_L);
+    *accel_z = (i2c_read_register(MPU6050_RA_ACCEL_ZOUT_H) << 8) | i2c_read_register(MPU6050_RA_ACCEL_ZOUT_L);
+    *gyro_x = (i2c_read_register(MPU6050_RA_GYRO_XOUT_H) << 8) | i2c_read_register(MPU6050_RA_GYRO_XOUT_L);
+    *gyro_y = (i2c_read_register(MPU6050_RA_GYRO_YOUT_H) << 8) | i2c_read_register(MPU6050_RA_GYRO_YOUT_L);
+    *gyro_z = (i2c_read_register(MPU6050_RA_GYRO_ZOUT_H) << 8) | i2c_read_register(MPU6050_RA_GYRO_ZOUT_L);
 }
