@@ -33,7 +33,7 @@ void i2c_init(void)
     // Configure I2C peripheral
     UCB0CTL1 |= UCSWRST;        // Put state machine in reset
     UCB0CTL0 = UCMST + UCMODE_3 + UCSYNC;  // I2CMaster, synchronous mode
-    UCB0CTL1 = UCSSEL_2 + UCSWRST;  // Use SMCLK, keep in reset
+    UCB0CTL1 = UCSSEL_SMCLK + UCSWRST;  // Use SMCLK, keep in reset
     UCB0BR0 = 12;             // fSCL = SMCLK/12 = ~100kHz
     UCB0BR1 = 0;
     UCB0CTL1 &= ~UCSWRST;       // Release state machine
