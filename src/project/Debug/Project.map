@@ -1,7 +1,7 @@
 ******************************************************************************
                   MSP430 Linker PC v21.6.0                     
 ******************************************************************************
->> Linked Thu Feb 16 06:52:12 2023
+>> Linked Thu Feb 16 07:04:58 2023
 
 OUTPUT FILE NAME:   <Project.out>
 ENTRY POINT SYMBOL: "_c_int00_noinit_noargs"  address: 00004400
@@ -85,7 +85,7 @@ MEMORY CONFIGURATION
   INT61                 0000fffa   00000002  00000002  00000000  RWIX
   INT62                 0000fffc   00000002  00000002  00000000  RWIX
   RESET                 0000fffe   00000002  00000002  00000000  RWIX
-  FLASH2                00010000   000143f8  0000037a  0001407e  RWIX
+  FLASH2                00010000   000143f8  000001a2  00014256  RWIX
 
 
 SECTION ALLOCATION MAP
@@ -186,34 +186,25 @@ SYSNMI     0    0000fffc    00000002
 .reset     0    0000fffe    00000002     
                   0000fffe    00000002     rts430x_lc_rd_eabi.lib : boot.c.obj (.reset)
 
-.text      0    00010000    0000037a     
-                  00010000    000000c4     main.obj (.text:read_mpu6050)
-                  000100c4    000000b8     rts430x_lc_rd_eabi.lib : fs_mpy.asm.obj (.text)
-                  0001017c    0000005e     main.obj (.text:main)
-                  000101da    00000046     rts430x_lc_rd_eabi.lib : fs_tou.asm.obj (.text)
-                  00010220    0000003e     main.obj (.text:init_i2c)
-                  0001025e    00000034     main.obj (.text:init_mpu6050)
-                  00010292    00000026     main.obj (.text:init_l298n)
-                  000102b8    00000024     rts430x_lc_rd_eabi.lib : fs_utof.asm.obj (.text)
-                  000102dc    00000020     main.obj (.text:config_l298n_pwm)
-                  000102fc    0000001c     main.obj (.text:i2c_read_register)
-                  00010318    00000014     main.obj (.text:i2c_write_register)
-                  0001032c    00000012     main.obj (.text:forward)
-                  0001033e    0000000e     main.obj (.text:i2c_start)
-                  0001034c    0000000c     main.obj (.text:i2c_read)
-                  00010358    0000000c     main.obj (.text:i2c_stop)
-                  00010364    0000000c     main.obj (.text:i2c_write)
-                  00010370    00000006     rts430x_lc_rd_eabi.lib : exit.c.obj (.text:abort)
-                  00010376    00000004                            : pre_init.c.obj (.text:_system_pre_init)
+.text      0    00010000    000001a2     
+                  00010000    000000b8     rts430x_lc_rd_eabi.lib : fs_mpy.asm.obj (.text)
+                  000100b8    00000046                            : fs_tou.asm.obj (.text)
+                  000100fe    00000026     main.obj (.text:init_l298n)
+                  00010124    00000024     rts430x_lc_rd_eabi.lib : fs_utof.asm.obj (.text)
+                  00010148    00000020     main.obj (.text:config_l298n_pwm)
+                  00010168    0000001e     main.obj (.text:main)
+                  00010186    00000012     main.obj (.text:forward)
+                  00010198    00000006     rts430x_lc_rd_eabi.lib : exit.c.obj (.text:abort)
+                  0001019e    00000004                            : pre_init.c.obj (.text:_system_pre_init)
 
 MODULE SUMMARY
 
        Module             code   ro data   rw data
        ------             ----   -------   -------
     .\
-       main.obj           590    0         0      
+       main.obj           118    0         0      
     +--+------------------+------+---------+---------+
-       Total:             590    0         0      
+       Total:             118    0         0      
                                                   
     C:\ti\ccs1210\ccs\tools\compiler\ti-cgt-msp430_21.6.0.LTS\lib\rts430x_lc_rd_eabi.lib
        fs_mpy.asm.obj     184    0         0      
@@ -250,7 +241,7 @@ MODULE SUMMARY
                                                   
        Stack:             0      0         160    
     +--+------------------+------+---------+---------+
-       Grand Total:       918    46        160    
+       Grand Total:       446    46        160    
 
 
 GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name 
@@ -339,7 +330,7 @@ address   name
 00000732  ADC12MEM9             
 00000733  ADC12MEM9_H           
 00000732  ADC12MEM9_L           
-00010370  C$$EXIT               
+00010198  C$$EXIT               
 000008c0  CBCTL0                
 000008c1  CBCTL0_H              
 000008c0  CBCTL0_L              
@@ -1020,27 +1011,18 @@ ffffffff  __TI_pprof_out_hndl
 ffffffff  __TI_prof_data_size   
 ffffffff  __TI_prof_data_start  
 ffffffff  __c_args__            
-000101da  __mspabi_fixfu        
-000102b8  __mspabi_fltuf        
-000100c4  __mspabi_mpyf         
+000100b8  __mspabi_fixfu        
+00010124  __mspabi_fltuf        
+00010000  __mspabi_mpyf         
 00004400  _c_int00_noinit_noargs
 0000fffe  _reset_vector         
 00004360  _stack                
-00010376  _system_pre_init      
-00010370  abort                 
-000102dc  config_l298n_pwm      
-0001032c  forward               
-0001034c  i2c_read              
-000102fc  i2c_read_register     
-0001033e  i2c_start             
-00010358  i2c_stop              
-00010364  i2c_write             
-00010318  i2c_write_register    
-00010220  init_i2c              
-00010292  init_l298n            
-0001025e  init_mpu6050          
-0001017c  main                  
-00010000  read_mpu6050          
+0001019e  _system_pre_init      
+00010198  abort                 
+00010148  config_l298n_pwm      
+00010186  forward               
+000100fe  init_l298n            
+00010168  main                  
 
 
 GLOBAL SYMBOLS: SORTED BY Symbol Address 
@@ -1808,28 +1790,19 @@ address   name
 0000fffa  __TI_int61            
 0000fffc  __TI_int62            
 0000fffe  _reset_vector         
-00010000  read_mpu6050          
-000100c4  __mspabi_mpyf         
-0001017c  main                  
-000101da  __mspabi_fixfu        
-00010220  init_i2c              
-0001025e  init_mpu6050          
-00010292  init_l298n            
-000102b8  __mspabi_fltuf        
-000102dc  config_l298n_pwm      
-000102fc  i2c_read_register     
-00010318  i2c_write_register    
-0001032c  forward               
-0001033e  i2c_start             
-0001034c  i2c_read              
-00010358  i2c_stop              
-00010364  i2c_write             
-00010370  C$$EXIT               
-00010370  abort                 
-00010376  _system_pre_init      
+00010000  __mspabi_mpyf         
+000100b8  __mspabi_fixfu        
+000100fe  init_l298n            
+00010124  __mspabi_fltuf        
+00010148  config_l298n_pwm      
+00010168  main                  
+00010186  forward               
+00010198  C$$EXIT               
+00010198  abort                 
+0001019e  _system_pre_init      
 ffffffff  __TI_pprof_out_hndl   
 ffffffff  __TI_prof_data_size   
 ffffffff  __TI_prof_data_start  
 ffffffff  __c_args__            
 
-[784 symbols]
+[775 symbols]

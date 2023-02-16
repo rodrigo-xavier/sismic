@@ -11,7 +11,7 @@ void init_i2c(void)
     P3SEL |= BIT0 + BIT1;                 // Enable I2C pins for USCI_B0
     UCB0CTL1 |= UCSWRST;                  // Software reset enabled
     UCB0CTL0 = UCMST + UCMODE_3 + UCSYNC; // I2C master mode, synchronous mode
-    UCB0CTL1 = UCSSEL_SMCLK + UCSWRST;        // SMCLK, software reset enabled
+    UCB0CTL1 = UCSSEL__SMCLK + UCSWRST;        // SMCLK, software reset enabled
     UCB0BR0 = 12;                         // Clock divider for 100 kHz
     UCB0BR1 = 0;
 
@@ -66,7 +66,7 @@ uint8_t i2c_read_register(uint8_t address)
     i2c_start();
     i2c_write(address);
     i2c_start();
-    UCB0CTL1 &= ~UCTR
+    UCB0CTL1 &= ~UCTR;
     data = i2c_read();
     i2c_stop();
     return data;
