@@ -1,7 +1,7 @@
 #pragma once
 #include <msp430.h>
 #include <stdint.h>
-#include "i2c.h" // Header file for MPU6050 functions
+#include "i2c.h"
 
 #define MPU6050_ADDRESS_AD0_LOW     0x68 // address pin low (GND), default for InvenSense evaluation board
 
